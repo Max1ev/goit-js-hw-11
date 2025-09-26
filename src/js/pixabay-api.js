@@ -5,7 +5,7 @@ const api = axios.create({
   timeout: 12000,
 });
 
-// ⚠️ свій ключ підстав
+
 const API_KEY = '52480069-e3f81e86b58f6705753339629';
 
 export function getImagesByQuery(query) {

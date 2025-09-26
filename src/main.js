@@ -1,8 +1,4 @@
-
 import './css/styles.css';
-import './css/loader.css';
-
-
 import axios from 'axios';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
@@ -22,7 +18,7 @@ const API_KEY = '52480069-e3f81e86b58f6705753339629';
 const form = document.getElementById('search-form');
 const input = document.getElementById('search-text');
 const gallery = document.getElementById('gallery');
-const loaderOverlay = document.getElementById('loader');
+const statusMessage = document.getElementById('status-message');
 
 
 const lightbox = new SimpleLightbox('.gallery a', {
@@ -32,27 +28,13 @@ const lightbox = new SimpleLightbox('.gallery a', {
 });
 
 
-function showLoader() {
-  loaderOverlay.classList.remove('is-hidden');
-}
-function hideLoader() {
-  loaderOverlay.classList.add('is-hidden');
-}
 function clearGallery() {
   gallery.innerHTML = '';
 }
 function createGallery(images) {
   const markup = images
     .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => `
+      ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
       <li class="card">
         <a href="${largeImageURL}">
           <img src="${webformatURL}" alt="${tags}" loading="lazy"/>
@@ -69,6 +51,16 @@ function createGallery(images) {
 
   gallery.insertAdjacentHTML('beforeend', markup);
   lightbox.refresh();
+}
+
+
+function setStatusLoading() {
+  statusMessage.textContent = 'Loading images, please wait...';
+  statusMessage.className = 'status-message loading';
+}
+function clearStatusMessage() {
+  statusMessage.textContent = '';
+  statusMessage.className = 'status-message';
 }
 
 
@@ -99,46 +91,51 @@ function onSubmit(e) {
       title: 'Oops',
       message: 'Please type something to search.',
       position: 'topRight',
-      class: 'iziToast-color-yellow',
+      maxWidth: 300,
+      timeout: 1500,
     });
     return;
   }
 
   clearGallery();
-  showLoader();
+  setStatusLoading();
 
   getImagesByQuery(query)
     .then(data => {
-      const hits = data.hits;
-      if (!hits || hits.length === 0) {
+      const hits = Array.isArray(data?.hits) ? data.hits : [];
+
+      if (hits.length === 0) {
+        clearStatusMessage();
         iziToast.error({
           title: 'No results',
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
+          message: 'Sorry, there are no images matching your search query. Please try again!',
           position: 'topRight',
-          class: 'iziToast-color-red',
+          maxWidth: 300,
+          timeout: 2000,
         });
         return;
       }
+
       createGallery(hits);
+      clearStatusMessage();
 
       iziToast.success({
         title: 'Success',
         message: `Found ${hits.length} images`,
         position: 'topRight',
-        class: 'iziToast-color-green',
+        maxWidth: 300,
+        timeout: 1500,
       });
     })
     .catch(err => {
+      console.error(err);
+      clearStatusMessage();
       iziToast.error({
         title: 'Error',
-        message: 'Something went wrong. Please try again later.',
+        message: 'Something went wrong. Please, try again later.',
         position: 'topRight',
-        class: 'iziToast-color-red',
+        maxWidth: 300,
+        timeout: 2000,
       });
-      console.error(err);
-    })
-    .finally(() => {
-      hideLoader();
     });
 }

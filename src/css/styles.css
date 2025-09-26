@@ -15,7 +15,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 
 .form input {
@@ -40,15 +40,27 @@ body {
   background: #6c8cff;
 }
 
+
+.status-message {
+  text-align: center;
+  margin: 4px 0 16px;
+  font-size: 14px;
+  min-height: 18px;
+}
+.status-message.loading {
+  color: #4e75ff;
+}
+.status-message.error {
+  color: #ff4e4e;
+}
+
+
 .gallery {
   display: grid;
   gap: 16px;
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.gallery {
   grid-template-columns: 1fr;
 }
 
@@ -57,13 +69,11 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-
 @media (min-width: 900px) {
   .gallery {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 @media (min-width: 1400px) {
   .gallery {
     grid-template-columns: repeat(5, 1fr);
@@ -106,6 +116,7 @@ body {
   color: #2e2f42;
 }
 
+
 .iziToast.iziToast-color-red {
   background: #ff4e4e;
   color: #fff;
@@ -113,12 +124,4 @@ body {
 .iziToast.iziToast-color-green {
   background: #4caf50;
   color: #fff;
-}
-.iziToast.iziToast-color-blue {
-  background: #2196f3;
-  color: #fff;
-}
-.iziToast.iziToast-color-yellow {
-  background: #ffc107;
-  color: #000;
 }
