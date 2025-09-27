@@ -1,57 +1,17 @@
 import './css/styles.css';
-import axios from 'axios';
+import './css/loader.css';
+
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.css';
 
-
-const api = axios.create({
-  baseURL: 'https://pixabay.com/api/',
-  timeout: 12000,
-});
-
-
-const API_KEY = '52480069-e3f81e86b58f6705753339629';
-
+import { getImagesByQuery } from './js/pixabay-api';
+import { createGallery, clearGallery, showLoader, hideLoader } from './js/render-functions';
 
 const form = document.getElementById('search-form');
 const input = document.getElementById('search-text');
-const gallery = document.getElementById('gallery');
 const statusMessage = document.getElementById('status-message');
 
-
-const lightbox = new SimpleLightbox('.gallery a', {
-  captions: true,
-  captionsData: 'alt',
-  captionDelay: 250,
-});
-
-
-function clearGallery() {
-  gallery.innerHTML = '';
-}
-function createGallery(images) {
-  const markup = images
-    .map(
-      ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
-      <li class="card">
-        <a href="${largeImageURL}">
-          <img src="${webformatURL}" alt="${tags}" loading="lazy"/>
-        </a>
-        <div class="meta">
-          <div><b>Likes</b>${likes}</div>
-          <div><b>Views</b>${views}</div>
-          <div><b>Comments</b>${comments}</div>
-          <div><b>Downloads</b>${downloads}</div>
-        </div>
-      </li>`
-    )
-    .join('');
-
-  gallery.insertAdjacentHTML('beforeend', markup);
-  lightbox.refresh();
-}
+form.addEventListener('submit', onSubmit);
 
 
 function setStatusLoading() {
@@ -62,25 +22,6 @@ function clearStatusMessage() {
   statusMessage.textContent = '';
   statusMessage.className = 'status-message';
 }
-
-
-function getImagesByQuery(query) {
-  return api
-    .get('', {
-      params: {
-        key: API_KEY,
-        q: query,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-        per_page: 20,
-      },
-    })
-    .then(res => res.data);
-}
-
-
-form.addEventListener('submit', onSubmit);
 
 function onSubmit(e) {
   e.preventDefault();
@@ -98,6 +39,7 @@ function onSubmit(e) {
   }
 
   clearGallery();
+  showLoader();
   setStatusLoading();
 
   getImagesByQuery(query)
@@ -137,5 +79,8 @@ function onSubmit(e) {
         maxWidth: 300,
         timeout: 2000,
       });
+    })
+    .finally(() => {
+      hideLoader();
     });
 }

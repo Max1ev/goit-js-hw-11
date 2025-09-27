@@ -50,9 +50,6 @@ body {
 .status-message.loading {
   color: #4e75ff;
 }
-.status-message.error {
-  color: #ff4e4e;
-}
 
 
 .gallery {

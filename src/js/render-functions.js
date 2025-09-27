@@ -1,5 +1,5 @@
 import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
+import 'simplelightbox/dist/simple-lightbox.css';
 
 const gallery = document.getElementById('gallery');
 const loaderOverlay = document.getElementById('loader');
@@ -9,6 +9,10 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
+
+export function clearGallery() {
+  gallery.innerHTML = '';
+}
 
 export function createGallery(images) {
   const markup = images
@@ -30,10 +34,6 @@ export function createGallery(images) {
 
   gallery.insertAdjacentHTML('beforeend', markup);
   lightbox.refresh();
-}
-
-export function clearGallery() {
-  gallery.innerHTML = '';
 }
 
 export function showLoader() {
